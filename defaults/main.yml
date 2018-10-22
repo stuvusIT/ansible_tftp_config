@@ -1,0 +1,7 @@
+---
+tftpd_directory: /srv/tftp
+tftpd_owner: root
+tftpd_group: tftp
+tftp_vesamenu: False
+tftp_always_show_boot_prompt: True
+tftp_timeout: 10

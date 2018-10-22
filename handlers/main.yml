@@ -1,0 +1,54 @@
+---
+- name: Download and unpack latest syslinux
+  unarchive:
+    remote_src: yes
+    src: https://mirrors.edge.kernel.org/pub/linux/utils/boot/syslinux/Testing/{{ syslinux_latest.stdout }}/syslinux-{{ syslinux_latest.stdout }}-pre1.tar.gz
+    dest: "{{ tftpd_directory }}"
+    owner: "{{ tftpd_owner }}"
+    group: "{{ tftpd_group }}"
+    mode: "{{ tftpd_mode }}"
+  listen: syslinux_new_version
+
+- name: Find base pxelinux binaries
+  find:
+    paths: "{{ tftpd_directory }}/syslinux-{{ syslinux_latest.stdout }}-pre1/"
+    recurse: yes
+    patterns: 'pxelinux.0,ldlinux.c32'
+  register: syslinux_pxelinux
+  listen: syslinux_new_version
+
+- name: Copy base pxelinux binaries
+  copy:
+    src: "{{ item.path }}"
+    dest: "{{ tftpd_directory }}/"
+    remote_src: yes
+  with_items: "{{ syslinux_pxelinux.files }}"
+  listen: syslinux_new_version
+
+- name: Find all c32 binaries
+  find:
+    paths: "{{ tftpd_directory }}/syslinux-{{ syslinux_latest.stdout }}-pre1/bios"
+    recurse: yes
+    patterns: '*.c32'
+  register: syslinux_binaries
+  listen: syslinux_new_version
+
+- name: Remove old binary data
+  file:
+    state: absent
+    path: "{{ tftpd_directory }}/bin/"
+  listen: syslinux_new_version
+
+- name: Create binary directory
+  file:
+    path: "{{ tftpd_directory }}/bin/"
+    state: directory
+  listen: syslinux_new_version
+
+- name: Copy binaries
+  copy:
+    src: "{{ item.path }}"
+    dest: "{{ tftpd_directory }}/bin/"
+    remote_src: yes
+  with_items: "{{ syslinux_binaries.files }}"
+  listen: syslinux_new_version

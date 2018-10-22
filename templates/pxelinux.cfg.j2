@@ -1,0 +1,46 @@
+# {{ ansible_managed }}
+
+path bin
+
+DEFAULT {% if tftp_vesamenu -%} vesa {%- endif -%} menu.c32
+PROMPT {{ tftp_always_show_boot_prompt | int }}
+TIMEOUT {{ tftp_timeout*10 | round | int }}
+
+{% if menu.value.kbmap is defined -%}
+KBDMAP {{ menu.value.kbmap }}
+{%- endif %}
+
+{% if menu.value.title is defined -%}
+MENU TITLE {{ menu.value.title }}
+{%- endif %}
+
+{% set indent_level = [0] %}
+{% for entry in menu.value.entries recursive %}
+
+LABEL {{ loop.depth }}_{{ loop.index }}
+	{% if entry is string and entry == "separator" -%}
+	MENU SEPARATOR
+	{% else -%}
+	MENU LABEL {{ entry.label }}
+	{% endif %}
+
+	{%- if entry.intmenu is defined -%}
+
+	MENU DISABLE
+	{% if indent_level.append(indent_level.pop() + 1) %}{% endif %}{# workaround to maintain actual indent_level counter#}
+	{{ loop(entry.intmenu) }}
+	{% if indent_level.append(indent_level.pop() - 1) %}{% endif %}{# workaround to maintain actual indent_level counter#}
+	
+	{% else -%}
+
+	MENU INDENT {{ indent_level[0] | string }}
+	{% if entry.help is defined -%}
+	TEXT HELP
+	{{ entry.help }}
+	ENDTEXT
+	{% endif -%}
+	{% if entry.kernel is defined %}KERNEL {{ entry.kernel }}{% endif %}
+	{% if entry.append is defined %}APPEND {{ entry.append }}{% endif %}
+	
+	{% endif %}
+{% endfor %}
