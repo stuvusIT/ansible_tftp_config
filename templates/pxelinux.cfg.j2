@@ -2,12 +2,12 @@
 
 path bin
 
-DEFAULT {% if tftp_vesamenu -%} vesa {%- endif -%} menu.c32
-PROMPT {{ tftp_always_show_boot_prompt | int }}
-TIMEOUT {{ tftp_timeout*10 | round | int }}
+DEFAULT {% if menu.value.vesamenu|default(tftp_vesamenu) -%} vesa {%- endif -%} menu.c32
+PROMPT {{ menu.value.always_show_boot_prompt|default(tftp_always_show_boot_prompt) | int }}
+TIMEOUT {{ menu.value.timeout|default(tftp_timeout)*10 | round | int }}
 
-{% if menu.value.kbmap is defined -%}
-KBDMAP {{ menu.value.kbmap }}
+{% if menu.value.kbmap is defined or tftp_kbmap is defined -%}
+KBDMAP {{ menu.value.kbmap|default(tftp_kbmap) }}
 {%- endif %}
 
 {% if menu.value.title is defined -%}
