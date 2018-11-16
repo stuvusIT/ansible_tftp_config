@@ -28,11 +28,11 @@
   with_items: "{{ syslinux_pxelinux.files }}"
   listen: syslinux_new_version
 
-- name: Find all c32 binaries
+- name: Find all c32 binaries and memdisk
   find:
     paths: "{{ tftpd_directory }}/syslinux-{{ syslinux_latest.stdout }}-pre1/bios"
     recurse: yes
-    patterns: '*.c32'
+    patterns: '*.c32,memdisk'
   register: syslinux_binaries
   listen: syslinux_new_version
 
