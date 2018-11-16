@@ -13,6 +13,9 @@ KBDMAP {{ menu.value.kbmap }}
 {% if menu.value.title is defined -%}
 MENU TITLE {{ menu.value.title }}
 {%- endif %}
+{% if menu.value.tabmsg is defined -%}
+MENU TABMSG {{ menu.value.tabmsg }}
+{%- endif %}
 
 {% set indent_level = [0] %}
 {% for entry in menu.value.entries recursive %}
