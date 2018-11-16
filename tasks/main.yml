@@ -4,18 +4,24 @@
       file:
         path: "{{ tftpd_directory }}/pxelinux.cfg/"
         state: directory
+        owner: "{{ tftpd_owner }}"
+        group: "{{ tftpd_group }}"
+        mode: "{{ tftpd_mode }}"
 
     - name: Install pxelinux.cfg
       template:
         src: pxelinux.cfg.j2
         dest: "{{ tftpd_directory }}/pxelinux.cfg/{{ menu.key }}"
+        owner: "{{ tftpd_owner }}"
+        group: "{{ tftpd_group }}"
+        mode: "{{ tftpd_mode }}"
       with_dict: "{{ tftpd_menu }}"
       loop_control:
         loop_var: menu
 
 
 - block:
-    # Use true as first command to avoid ansible warings, about using curl
+    # Use true as first command to avoid ansible warings, about curl usage
     - name: Collect latest syslinux version number
       shell: true; curl -s https://mirrors.edge.kernel.org/pub/linux/utils/boot/syslinux/Testing/ | sort | grep 'href="[0-9]' | sed 's/.*="\([.0-9]*\).*/\1/g' | tail -n 1
       register: syslinux_latest

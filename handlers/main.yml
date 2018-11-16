@@ -21,6 +21,9 @@
   copy:
     src: "{{ item.path }}"
     dest: "{{ tftpd_directory }}/"
+    owner: "{{ tftpd_owner }}"
+    group: "{{ tftpd_group }}"
+    mode: "{{ tftpd_mode }}"
     remote_src: yes
   with_items: "{{ syslinux_pxelinux.files }}"
   listen: syslinux_new_version
@@ -49,6 +52,9 @@
   copy:
     src: "{{ item.path }}"
     dest: "{{ tftpd_directory }}/bin/"
+    owner: "{{ tftpd_owner }}"
+    group: "{{ tftpd_group }}"
+    mode: "{{ tftpd_mode }}"
     remote_src: yes
   with_items: "{{ syslinux_binaries.files }}"
   listen: syslinux_new_version
