@@ -1,0 +1,34 @@
+---
+galaxy_info:
+  author: Markus Mroch (Mr. Pi)
+  description: Install syslinux and generate a proper pxelinux (vesa)menu.c32 configuration
+  company: stuvus (https://stuvus.uni-stuttgart.de)
+
+  license: CC-BY-SA
+
+  min_ansible_version: 2.4
+
+  platforms:
+    - name: Debian
+      versions:
+        - squeeze
+        - wheezy
+        - jessie
+        - stretch
+    - name: Ubuntu
+      versions:
+        - xenial
+        - yakkety
+        - zesty
+        - artful
+        - bionic
+        - cosmic
+
+  galaxy_tags:
+    - pxe
+    - pxelinux
+    - syslinux
+    - menu.c32
+    - netboot
+
+dependencies: []
