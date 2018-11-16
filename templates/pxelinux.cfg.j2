@@ -16,6 +16,13 @@ MENU TITLE {{ menu.value.title }}
 {% if menu.value.tabmsg is defined -%}
 MENU TABMSG {{ menu.value.tabmsg }}
 {%- endif %}
+{% if menu.value.extra_entries is defined %}
+
+
+{% for entry in menu.value.extra_entries %}
+{{ entry }}
+{% endfor %}
+{% endif %}
 
 {% set indent_level = [0] %}
 {% for entry in menu.value.entries recursive %}
