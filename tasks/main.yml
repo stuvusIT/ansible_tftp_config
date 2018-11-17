@@ -27,7 +27,7 @@
       register: syslinux_latest
       changed_when: False
 
-    - name: Check if a newest version is installed
+    - name: Check whether the newest version is already installed
       stat:
         path: "{{ tftpd_directory }}/syslinux-{{ syslinux_latest.stdout }}-pre1"
       register: syslinux_version_check

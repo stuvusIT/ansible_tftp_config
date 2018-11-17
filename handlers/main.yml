@@ -36,19 +36,19 @@
   register: syslinux_binaries
   listen: syslinux_new_version
 
-- name: Remove old binary data
+- name: Remove old syslinux binary data
   file:
     state: absent
     path: "{{ tftpd_directory }}/bin/"
   listen: syslinux_new_version
 
-- name: Create binary directory
+- name: Create binary directory for syslinux
   file:
     path: "{{ tftpd_directory }}/bin/"
     state: directory
   listen: syslinux_new_version
 
-- name: Copy binaries
+- name: Copy syslinux binaries
   copy:
     src: "{{ item.path }}"
     dest: "{{ tftpd_directory }}/bin/"
