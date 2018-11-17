@@ -19,8 +19,6 @@
       loop_control:
         loop_var: menu
 
-
-- block:
     # Use true as first command to avoid ansible warings, about curl usage
     - name: Collect latest syslinux version number
       shell: true; curl -s https://mirrors.edge.kernel.org/pub/linux/utils/boot/syslinux/Testing/ | sort | grep 'href="[0-9]' | sed 's/.*="\([.0-9]*\).*/\1/g' | tail -n 1
