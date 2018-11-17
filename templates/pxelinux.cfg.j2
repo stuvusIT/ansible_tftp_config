@@ -22,34 +22,35 @@ MENU TABMSG {{ menu.value.tabmsg }}
 {% for entry in menu.value.extra_entries %}
 {{ entry }}
 {% endfor %}
-{% endif %}
+{% endif %}{# if menu.value.extra_entries is defined #}
 
-{% set indent_level = [0] %}
-{% for entry in menu.value.entries recursive %}
+{% set indent_level = [0] %}{# this variable is used to hold the correct indentation level for indentation submenus(`intmenu`) #}
+{% for entry in menu.value.entries recursive %}{# iterate over all menu entries #}
 
-{% if entry is string and entry == "separator" -%}
+{% if entry is string and entry == "separator" -%}{# it's just a separator #}
 MENU SEPARATOR
 
-{% elif entry.intmenu is defined %}
+{% elif entry.intmenu is defined %}{# add a new indention menu | if entry is string and entry == "separator" #}
 {% if entry.label is defined %}
 LABEL {{ loop.depth }}_{{ loop.index }}
 	MENU LABEL {{ entry.label }}
 	MENU INDENT {{ indent_level[-1]*4 }}
 	MENU DISABLE
-{% endif %}
-{% if indent_level.append(indent_level.pop() + 1) %}{% endif %}{# workaround to maintain actual indent_level counter#}
+{% endif %}{# if entry.label is defined #}
+{% if indent_level.append(indent_level.pop() + 1) %}{% endif %}{# workaround to maintain actual indent_level counter, we need to manipulate the global variable not a copy #}
 {{ loop(entry.intmenu) }}
-{% if indent_level.append(indent_level.pop() - 1) %}{% endif %}{# workaround to maintain actual indent_level counter#}
+{% if indent_level.append(indent_level.pop() - 1) %}{% endif %}{# workaround to maintain actual indent_level counter #}
 	
-{% elif entry.submenu is defined %}
-{% if indent_level.append(0) %}{% endif %}
+{% elif entry.submenu is defined %}{# add new submenu on a new screen | if entry is string and entry == "separator" #}
+{% if indent_level.append(0) %}{% endif %}{# we are on a new screen, so add a new indentation level counter for the new screen #}
 MENU BEGIN {{ entry.tag | default(loop.depth|string+"_"+loop.index|string+"_sub") }}
-{% if entry.label is defined %}MENU TITLE {% if indent_level[-2]>0 %}>{{ ""|center(indent_level[-2]*4-1) }}{% endif %}{{ entry.label }}{% endif %}
+{% if entry.label is defined %}MENU TITLE {% if indent_level[-2]>0 %}>{{ ""|center(indent_level[-2]*4-1) }}{% endif %}{{ entry.label }}{% endif %}{#
+the previous if and the strange center operation are necessary for correct submenu title indention on nested intmenus #}
 {{ loop(entry.submenu) }}
 MENU END
-{% if indent_level.pop() %}{% endif %}
+{% if indent_level.pop() %}{% endif %}{# we leaving a submenu screen so remove the indentation counter for this screen and use the indentation counter for current menu #}
 
-{% else %}
+{% else %}{# if entry is string and entry == "separator" #}
 LABEL {{ loop.depth }}_{{ loop.index }}
 	MENU LABEL {{ entry.label }}
 	MENU INDENT {{ indent_level[-1]*4 }}
@@ -61,5 +62,5 @@ LABEL {{ loop.depth }}_{{ loop.index }}
 	{% if entry.kernel is defined %}KERNEL {{ entry.kernel }}{% endif %}
 	{% if entry.append is defined %}APPEND {{ entry.append }}{% endif %}
 
-{% endif %}
-{% endfor %}
+{% endif %}{# if entry is string and entry == "separator" #}
+{% endfor %}{# for entry in menu.value.entries recursive #}
