@@ -1,0 +1,66 @@
+# {{ ansible_managed }}
+
+path bin
+
+DEFAULT {% if menu.value.vesamenu|default(tftp_vesamenu) -%} vesa {%- endif -%} menu.c32
+PROMPT {{ menu.value.always_show_boot_prompt|default(tftp_always_show_boot_prompt) | int }}
+TIMEOUT {{ menu.value.timeout|default(tftp_timeout)*10 | round | int }}
+
+{% if menu.value.kbmap is defined or tftp_kbmap is defined -%}
+KBDMAP {{ menu.value.kbmap|default(tftp_kbmap) }}
+{%- endif %}
+
+{% if menu.value.title is defined -%}
+MENU TITLE {{ menu.value.title }}
+{%- endif %}
+{% if menu.value.tabmsg is defined -%}
+MENU TABMSG {{ menu.value.tabmsg }}
+{%- endif %}
+{% if menu.value.extra_entries is defined %}
+
+
+{% for entry in menu.value.extra_entries %}
+{{ entry }}
+{% endfor %}
+{% endif %}{# if menu.value.extra_entries is defined #}
+
+{% set indent_level = [0] %}{# this variable is used to hold the correct indentation level for indentation submenus(`intmenu`) #}
+{% for entry in menu.value.entries recursive %}{# iterate over all menu entries #}
+
+{% if entry is string and entry == "separator" -%}{# it's just a separator #}
+MENU SEPARATOR
+
+{% elif entry.intmenu is defined %}{# add a new indention menu | if entry is string and entry == "separator" #}
+{% if entry.label is defined %}
+LABEL {{ loop.depth }}_{{ loop.index }}
+	MENU LABEL {{ entry.label }}
+	MENU INDENT {{ indent_level[-1]*4 }}
+	MENU DISABLE
+{% endif %}{# if entry.label is defined #}
+{% if indent_level.append(indent_level.pop() + 1) %}{% endif %}{# workaround to maintain actual indent_level counter, we need to manipulate the global variable not a copy #}
+{{ loop(entry.intmenu) }}
+{% if indent_level.append(indent_level.pop() - 1) %}{% endif %}{# workaround to maintain actual indent_level counter #}
+	
+{% elif entry.submenu is defined %}{# add new submenu on a new screen | if entry is string and entry == "separator" #}
+{% if indent_level.append(0) %}{% endif %}{# we are on a new screen, so add a new indentation level counter for the new screen #}
+MENU BEGIN {{ entry.tag | default(loop.depth|string+"_"+loop.index|string+"_sub") }}
+{% if entry.label is defined %}MENU TITLE {% if indent_level[-2]>0 %}>{{ ""|center(indent_level[-2]*4-1) }}{% endif %}{{ entry.label }}{% endif %}{#
+the previous if and the strange center operation are necessary for correct submenu title indention on nested intmenus #}
+{{ loop(entry.submenu) }}
+MENU END
+{% if indent_level.pop() %}{% endif %}{# we leaving a submenu screen so remove the indentation counter for this screen and use the indentation counter for current menu #}
+
+{% else %}{# if entry is string and entry == "separator" #}
+LABEL {{ loop.depth }}_{{ loop.index }}
+	MENU LABEL {{ entry.label }}
+	MENU INDENT {{ indent_level[-1]*4 }}
+	{% if entry.help is defined -%}
+	TEXT HELP
+	{{ entry.help }}
+	ENDTEXT
+	{% endif -%}
+	{% if entry.kernel is defined %}KERNEL {{ entry.kernel }}{% endif %}
+	{% if entry.append is defined %}APPEND {{ entry.append }}{% endif %}
+
+{% endif %}{# if entry is string and entry == "separator" #}
+{% endfor %}{# for entry in menu.value.entries recursive #}

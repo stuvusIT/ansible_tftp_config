@@ -1,0 +1,41 @@
+---
+- block:
+    - name: Make sure pxelinux.cfg directory does exist
+      file:
+        path: "{{ tftpd_directory }}/pxelinux.cfg/"
+        state: directory
+        owner: "{{ tftpd_owner }}"
+        group: "{{ tftpd_group }}"
+        mode: "{{ tftpd_mode }}"
+
+    - name: Install pxelinux.cfg
+      template:
+        src: pxelinux.cfg.j2
+        dest: "{{ tftpd_directory }}/pxelinux.cfg/{{ menu.key }}"
+        owner: "{{ tftpd_owner }}"
+        group: "{{ tftpd_group }}"
+        mode: "{{ tftpd_mode }}"
+      with_dict: "{{ tftpd_menu }}"
+      loop_control:
+        loop_var: menu
+
+    # Use true as first command to avoid ansible warings, about curl usage
+    - name: Collect latest syslinux version number
+      shell: true; curl -s https://mirrors.edge.kernel.org/pub/linux/utils/boot/syslinux/Testing/ | sort | grep 'href="[0-9]' | sed 's/.*="\([.0-9]*\).*/\1/g' | tail -n 1
+      register: syslinux_latest
+      changed_when: False
+
+    - name: Check whether the newest version is already installed
+      stat:
+        path: "{{ tftpd_directory }}/syslinux-{{ syslinux_latest.stdout }}-pre1"
+      register: syslinux_version_check
+      changed_when: not syslinux_version_check.stat.exists
+      notify: syslinux_new_version
+
+    - meta: flush_handlers
+
+  rescue:
+    - name: Reset/Cleanup after error
+      file:
+        state: absent
+        path: "{{ tftpd_directory }}/syslinux-{{ syslinux_latest.stdout }}-pre1"

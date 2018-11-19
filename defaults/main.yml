@@ -1,0 +1,8 @@
+---
+tftpd_directory: /srv/tftp
+tftpd_owner: root
+tftpd_group: tftp
+tftpd_mode: 'u=rwX,g=rX,o=rX'  # No octal numbers are used to set correct permissions for files and directories (don't set the x flag for files)
+tftp_vesamenu: False
+tftp_always_show_boot_prompt: True
+tftp_timeout: 10
