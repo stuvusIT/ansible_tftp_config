@@ -33,17 +33,17 @@ For additional information see [syslinux menu.c32](https://www.syslinux.org/wiki
 
 ### Primary
 
-| Option                         | Type                    | Default            | Description                                                                                                         |
-|--------------------------------|-------------------------|--------------------|---------------------------------------------------------------------------------------------------------------------|
-| `tftpd_directory`              | string                  | `/srv/tftp`        | The path to the directory the pxelinux.cfg config should generate in (this is usual the PXE server root directory)  |
-| `tftpd_owner`                  | string                  | `root`             | Owner for the `tftpd_directory` and newly generated files (the user must already exist)                             |
-| `tftpd_group`                  | string                  | `tftp`             | Group for the `tftpd_directory` and newly generated files (the group must already exist)                            |
-| `tftpd_mode`                   | string                  | `'u=rwX,g=rX,o=r'` | Set the file/directory permissions to this mode (Please note this option is applied for both files and directories) |
-| `tftp_vesamenu`                | boolean                 | `False`            | Use vesamenu.c32 instead of the more simplified menu.c32 binary                                                     |
-| `tftp_always_show_boot_prompt` | boolean                 | `True`             | Always show the boot prompt before any c32 menu binary is loaded                                                    |
-| `tftp_kbmap`                   | string                  |                    | Specifies the keymap to use at the boot menu                                                                        |
-| `tftp_timeout`                 | integer                 | `10`               | Load selected default entry after timeout exceeds                                                                   |
-| `tftp_menu`                    | [dict](#tftp_menu_item) | `[]`               | A list of all menu items                                                                                            |
+| Option                         | Type                    | Default             | Description                                                                                                         |
+|--------------------------------|-------------------------|---------------------|---------------------------------------------------------------------------------------------------------------------|
+| `tftpd_directory`              | string                  | `/srv/tftp`         | The path to the directory the pxelinux.cfg config should generate in (this is usual the PXE server root directory)  |
+| `tftpd_owner`                  | string                  | `root`              | Owner for the `tftpd_directory` and newly generated files (the user must already exist)                             |
+| `tftpd_group`                  | string                  | `tftp`              | Group for the `tftpd_directory` and newly generated files (the group must already exist)                            |
+| `tftpd_mode`                   | string                  | `'u=rwX,g=rX,o=rX'` | Set the file/directory permissions to this mode (Please note this option is applied for both files and directories) |
+| `tftp_vesamenu`                | boolean                 | `False`             | Use vesamenu.c32 instead of the more simplified menu.c32 binary                                                     |
+| `tftp_always_show_boot_prompt` | boolean                 | `True`              | Always show the boot prompt before any c32 menu binary is loaded                                                    |
+| `tftp_kbmap`                   | string                  |                     | Specifies the keymap to use at the boot menu                                                                        |
+| `tftp_timeout`                 | integer                 | `10`                | Load selected default entry after timeout exceeds                                                                   |
+| `tftp_menu`                    | [dict](#tftp_menu_item) | `[]`                | A list of all menu items                                                                                            |
 
 _None of the Options above are required_
 
